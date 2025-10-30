@@ -5,6 +5,29 @@ import torch
 import torchvision.transforms as T
 from torchvision.models import resnet18
 
+def compute_optical_flow(frames):
+    flows = []
+    prev = cv2.cvtColor(frames[0], cv2.COLOR_BGR2GRAY)
+
+    for i in range(1, len(frames)):
+        gray = cv2.cvtColor(frames[i], cv2.COLOR_BGR2GRAY)
+
+        flow = cv2.calcOpticalFlowFarneback(
+            prev, gray,
+            None,
+            pyr_scale=0.5, levels=3, winsize=15,
+            iterations=3, poly_n=5, poly_sigma=1.2, flags=0
+        )
+
+        mag = np.linalg.norm(flow, axis=2).mean()
+
+        flows.append(mag)
+        prev = gray
+
+    flows.append(flows[-1])
+
+    return np.array(flows).reshape(-1,1).astype(np.float32)
+
 def extract_cnn_embeddings(frames):
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
