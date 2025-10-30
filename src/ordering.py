@@ -1,20 +1,23 @@
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
-def combined_similarity(color_feats, orb_feats, cnn_feats, wc=0.2, wo=0.3, wd=0.5):
-    def normalize(x):
+def combined_similarity(color, orb, cnn, flow, wc=0.1, wo=0.25, wd=0.45, wf=0.20):
+    def norm(x):
         n = np.linalg.norm(x, axis=1, keepdims=True) + 1e-9
         return x / n
 
-    c = normalize(color_feats)
-    o = normalize(orb_feats)
-    d = normalize(cnn_feats)
+    c = norm(color)
+    o = norm(orb)
+    d = norm(cnn)
+    f = norm(flow)
 
-    sim_color = c @ c.T
-    sim_orb   = o @ o.T
-    sim_cnn   = d @ d.T  
+    sim_c = c @ c.T
+    sim_o = o @ o.T
+    sim_d = d @ d.T
+    sim_f = f @ f.T      
 
-    return (wc * sim_color) + (wo * sim_orb) + (wd * sim_cnn)
+    return wc * sim_c + wo * sim_o + wd * sim_d + wf * sim_f
+
 
 
 def greedy_beam_order(sim_matrix, beam_width=8):
