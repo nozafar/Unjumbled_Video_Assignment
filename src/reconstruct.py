@@ -1,8 +1,7 @@
-# src/reconstruct.py
 import cv2, os, argparse, numpy as np, imageio
 from tqdm import tqdm
 
-# ✅ NEW imports (CNN embeddings added)
+
 from features import (
     extract_color_histograms,
     build_orb_bovw,
@@ -30,7 +29,7 @@ def extract_frames(video_path, expected_frames=300):
 def write_video(frames, order, out_path='reconstructed.mp4', fps=30):
     writer = imageio.get_writer(out_path, fps=fps, codec="mpeg4")  # ✅ works on Windows
     for idx in order:
-        frame = frames[idx][:, :, ::-1]  # BGR → RGB
+        frame = frames[idx][:, :, ::-1]
         writer.append_data(frame)
     writer.close()
 
@@ -39,42 +38,37 @@ def main(args):
     timer = Timer()
     timer.start("total")
 
-    # ✅ Extract frames
     timer.start("extract_frames")
     frames = extract_frames(args.input, expected_frames=300)
     timer.stop("extract_frames")
 
-    # ✅ Feature extraction (color histograms)
     timer.start("features_color")
     color_feats = extract_color_histograms(frames, bins=32)
     timer.stop("features_color")
 
-    # ✅ ORB Bag-of-Visual-Words
+
     timer.start("features_orb")
     orb_feats = build_orb_bovw(frames, voc_k=128, sample_limit=15000, verbose=True)
     timer.stop("features_orb")
-
-    # ✅ NEW: CNN embeddings (ResNet18)
     timer.start("features_cnn")
     cnn_feats = extract_cnn_embeddings(frames)
     timer.stop("features_cnn")
 
-    # ✅ Compute hybrid similarity matrix (deep + ORB + color)
     timer.start("similarity_matrix")
     sim = combined_similarity(
         color_feats, orb_feats, cnn_feats,
-        wc=0.15,   # color hist
-        wo=0.35,   # ORB
-        wd=0.50    # CNN (most important)
+        wc=0.15, 
+        wo=0.35, 
+        wd=0.50  
     )
     timer.stop("similarity_matrix")
 
-    # ✅ Beam search ordering
+
     timer.start("ordering")
     order = greedy_beam_order(sim, beam_width=args.beam)
     timer.stop("ordering")
 
-    # ✅ Write output video
+
     timer.start("write_video")
     write_video(frames, order, out_path=args.output, fps=args.fps)
     timer.stop("write_video")
