@@ -162,10 +162,3 @@ Example:
 
 ---
 
-If you want, I can also generate:
-
-* a PDF report,
-* presentation slides,
-* or visual diagrams explaining the algorithm.
-
-Just tell me: `generate report` or `generate slides`.
