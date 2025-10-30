@@ -1,4 +1,3 @@
-# src/features.py
 import cv2, numpy as np
 from sklearn.cluster import MiniBatchKMeans
 from tqdm import tqdm
@@ -10,7 +9,7 @@ def extract_cnn_embeddings(frames):
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     model = resnet18(pretrained=True)
-    model = torch.nn.Sequential(*list(model.children())[:-1])  # remove classifier
+    model = torch.nn.Sequential(*list(model.children())[:-1])
     model.to(device)
     model.eval()
 
@@ -43,7 +42,6 @@ def extract_color_histograms(frames, bins=32):
     return np.vstack(hists).astype(np.float32)
 
 def build_orb_bovw(frames, voc_k=128, sample_limit=20000, verbose=False):
-    # Extract ORB descriptors per frame
     orb = cv2.ORB_create(nfeatures=500)
     descs = []
     descs_per_frame = []
@@ -56,11 +54,9 @@ def build_orb_bovw(frames, voc_k=128, sample_limit=20000, verbose=False):
         if d.shape[0] > 0:
             descs.append(d)
     if len(descs) == 0:
-        # fallback: zeros
         return np.zeros((len(frames), voc_k), dtype=np.float32)
     all_desc = np.vstack(descs).astype(np.float32)
 
-    # sample if too many
     n = all_desc.shape[0]
     if n > sample_limit:
         idx = np.random.choice(n, sample_limit, replace=False)

@@ -1,4 +1,3 @@
-# src/ordering.py
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -22,15 +21,14 @@ def greedy_beam_order(sim_matrix, beam_width=8):
     N = sim_matrix.shape[0]
     best_path = None
     best_score = -1e9
-    # try every frame as start OR choose few seeds
     seeds = list(range(N))
     for s in seeds:
-        beam = [ ( -0.0, [s], {s} ) ]  # (negative cumulative score, path, used_set)
+        beam = [ ( -0.0, [s], {s} ) ]
         for _ in range(N-1):
             newbeam = []
             for neg_score, path, used in beam:
                 last = path[-1]
-                # candidate successors
+
                 cands = [(sim_matrix[last, j], j) for j in range(N) if j not in used]
                 cands.sort(reverse=True)
                 topk = cands[:beam_width]
@@ -38,14 +36,13 @@ def greedy_beam_order(sim_matrix, beam_width=8):
                     newpath = path + [j]
                     newused = set(used)
                     newused.add(j)
-                    newneg = neg_score - sim  # negative since we store -score
+                    newneg = neg_score - sim 
                     newbeam.append((newneg, newpath, newused))
-            # prune
+
             if not newbeam:
                 break
             newbeam.sort(key=lambda x: x[0])
             beam = newbeam[:beam_width]
-        # evaluate beams
         for neg_score, path, used in beam:
             total = -neg_score
             if total > best_score:
