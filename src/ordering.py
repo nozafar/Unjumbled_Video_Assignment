@@ -2,20 +2,21 @@
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
-def combined_similarity(feat1, feat2, w1=0.8, w2=0.2):
-    # feat1, feat2: numpy arrays (N x d1), (N x d2)
-    # compute cosine similarity matrices and weighted sum
-    f1 = feat1.copy().astype(np.float32)
-    f2 = feat2.copy().astype(np.float32)
-    # normalize
-    def norm_rows(x):
+def combined_similarity(color_feats, orb_feats, cnn_feats, wc=0.2, wo=0.3, wd=0.5):
+    def normalize(x):
         n = np.linalg.norm(x, axis=1, keepdims=True) + 1e-9
         return x / n
-    nf1 = norm_rows(f1)
-    nf2 = norm_rows(f2)
-    s1 = nf1.dot(nf1.T)
-    s2 = nf2.dot(nf2.T)
-    return w1 * s1 + w2 * s2
+
+    c = normalize(color_feats)
+    o = normalize(orb_feats)
+    d = normalize(cnn_feats)
+
+    sim_color = c @ c.T
+    sim_orb   = o @ o.T
+    sim_cnn   = d @ d.T  
+
+    return (wc * sim_color) + (wo * sim_orb) + (wd * sim_cnn)
+
 
 def greedy_beam_order(sim_matrix, beam_width=8):
     N = sim_matrix.shape[0]
