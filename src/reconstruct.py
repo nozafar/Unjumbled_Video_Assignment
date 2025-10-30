@@ -40,38 +40,34 @@ def write_video(frames, order, out_path='reconstructed.mp4', fps=30):
 def main(args):
     timer = Timer()
     timer.start("total")
-
-    # ------------------------------------------------------------
     print("\n➡ Extracting frames...")
     timer.start("extract_frames")
     frames = extract_frames(args.input, expected_frames=300)
     timer.stop("extract_frames")
 
-    # ------------------------------------------------------------
+
     print("➡ Extracting COLOR histograms...")
     timer.start("features_color")
     color_feats = extract_color_histograms(frames, bins=32)
     timer.stop("features_color")
 
-    # ------------------------------------------------------------
+ 
     print("➡ Extracting ORB visual words...")
     timer.start("features_orb")
     orb_feats = build_orb_bovw(frames, voc_k=128, sample_limit=15000, verbose=True)
     timer.stop("features_orb")
 
-    # ------------------------------------------------------------
     print("➡ Extracting CNN embeddings...")
     timer.start("features_cnn")
     cnn_feats = extract_cnn_embeddings(frames)
     timer.stop("features_cnn")
 
-    # ------------------------------------------------------------
+
     print("➡ Extracting OPTICAL FLOW (motion features)...")
     timer.start("features_flow")
     flow_feats = compute_optical_flow(frames)
     timer.stop("features_flow")
 
-    # ------------------------------------------------------------
     print("➡ Combining multi-feature similarity...")
     timer.start("similarity_matrix")
     sim = combined_similarity(
@@ -83,19 +79,18 @@ def main(args):
     )
     timer.stop("similarity_matrix")
 
-    # ------------------------------------------------------------
+   
     print("➡ Ordering frames using beam search...")
     timer.start("ordering")
     order = greedy_beam_order(sim, beam_width=args.beam)
     timer.stop("ordering")
 
-    # ------------------------------------------------------------
+
     print("➡ Writing reconstruction video...")
     timer.start("write_video")
     write_video(frames, order, out_path=args.output, fps=args.fps)
     timer.stop("write_video")
 
-    # ------------------------------------------------------------
     timer.stop("total")
     print("\n✅ Reconstruction completed successfully →", args.output)
     print("\n⏱ Execution Summary:")
