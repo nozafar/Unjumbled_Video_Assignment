@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 
 def find_start_frame(diff):
     sums = np.sum(diff, axis=1)
@@ -6,17 +7,17 @@ def find_start_frame(diff):
 
 
 def reconstruct_sequence(diff, start):
-    print("Reconstructing optimal sequence...")
+    print("\n🧠 Reconstructing optimal sequence...")
 
     n = diff.shape[0]
     visited = {start}
     seq = [start]
     current = start
 
-    for _ in range(n - 1):
+    for _ in tqdm(range(n - 1), desc="🔄 Reordering frames", ncols=70):
         d = diff[current].copy()
-        for v in visited:
-            d[v] = float('inf')
+
+        d[list(visited)] = float('inf')
 
         nxt = np.argmin(d)
         seq.append(nxt)
