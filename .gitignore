@@ -5,7 +5,5 @@ __pycache__/
 *.mp4
 .DS_Store
 *.json
-output/
 .json
-frames/
 *.jpg
