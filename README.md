@@ -236,15 +236,6 @@ In `src/features.py`, change:
 orb_feats = build_orb_bovw(frames, voc_k=250, ...)  # from 200 to 250
 ```
 
-### GPU not detected?
-Verify PyTorch CUDA installation:
-```python
-import torch
-print(torch.cuda.is_available())  # Should return True
-```
-
----
-
 ## ✉ Submission Deliverables
 
 ✅ Complete source code with improved algorithms  
@@ -305,16 +296,6 @@ Potential enhancements for even better accuracy:
 - [ ] **Genetic algorithms**: Test evolutionary optimization approaches
 - [ ] **Learning-based ordering**: Train a neural network to predict frame order
 
----
-
-## 📚 References & Inspiration
-
-- Farneback, G. (2003). "Two-Frame Motion Estimation Based on Polynomial Expansion"
-- Rublee, E. et al. (2011). "ORB: An efficient alternative to SIFT or SURF"
-- He, K. et al. (2016). "Deep Residual Learning for Image Recognition"
-- TSP optimization techniques from combinatorial optimization literature
-
----
 
 ## 👤 Author
 
