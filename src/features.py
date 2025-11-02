@@ -26,8 +26,7 @@ def compute_optical_flow(frames):
             pyr_scale=0.5, levels=3, winsize=15,
             iterations=3, poly_n=5, poly_sigma=1.2, flags=0
         )
-        
-        # Just magnitude
+    
         mag = np.linalg.norm(flow, axis=2).mean()
         flows.append(mag)
         
@@ -70,7 +69,7 @@ def extract_cnn_embeddings(frames):
     
     feats = np.vstack(feats).astype(np.float32)
     
-    # L2 normalize
+
     feats /= (np.linalg.norm(feats, axis=1, keepdims=True) + 1e-9)
     
     return feats
