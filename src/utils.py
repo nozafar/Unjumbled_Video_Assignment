@@ -1,46 +1,28 @@
-import cv2
-import json
 import time
-from datetime import datetime
-
+import json
 
 class Timer:
     def __init__(self):
-        self.start_time = None
-        self.records = {}
+        self.times = {}
+        self.active = {}
 
-    def start(self, label):
-        self.records[label] = -time.time()  
+    def start(self, name):
+        self.active[name] = time.time()
 
-    def stop(self, label):
-        self.records[label] += time.time()  
+    def stop(self, name):
+        if name not in self.active:
+            print(f"[Timer] WARNING: Timer '{name}' was never started")
+            return
 
-    def to_json(self, filename="execution_log.json", extra=None):
-        log_data = {
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "execution_summary": self.records,
-        }
+        elapsed = time.time() - self.active[name]
+        self.times[name] = elapsed
+        del self.active[name]
 
-        if extra:
-            log_data.update(extra)
+    def print_summary(self):
+        print("\n Execution Time Summary:")
+        for k, v in self.times.items():
+            print(f" - {k}: {v:.3f}s")
 
+    def to_json(self, filename="runtime.json"):
         with open(filename, "w") as f:
-            json.dump(log_data, f, indent=4)
-
-        print(f"📝 Execution log saved → {filename}")
-
-
-def create_video_from_sequence(frames, seq, output, fps=30):
-    print("Creating output video...")
-
-    sample = cv2.imread(frames[0])
-    h, w = sample.shape[:2]
-    out = cv2.VideoWriter(output, cv2.VideoWriter_fourcc(*"mp4v"), fps, (w, h))
-
-    for idx in seq:
-        frame = cv2.imread(frames[idx])
-        if frame is not None:
-            out.write(frame)
-
-    out.release()
-    print(f"✅ Video saved: {output}")
+            json.dump(self.times, f, indent=4)
