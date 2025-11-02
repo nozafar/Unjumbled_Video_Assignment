@@ -79,7 +79,7 @@ def main(args):
     timer.start("extract_frames")
     frames = extract_frames(args.input, expected_frames=300)
     timer.stop("extract_frames")
-    print(f"✓ Extracted {len(frames)} frames")
+    print(f"Extracted {len(frames)} frames")
     
     print("\n[2/6] Computing CNN embeddings")
     timer.start("features_cnn")
@@ -91,19 +91,19 @@ def main(args):
     timer.start("features_orb")
     orb_feats = build_orb_bovw(frames, voc_k=200, sample_limit=25000, verbose=True)
     timer.stop("features_orb")
-    print(f"✓ ORB features: {orb_feats.shape}")
+    print(f"ORB features: {orb_feats.shape}")
     
     print("\n[4/6] Computing color histograms...")
     timer.start("features_color")
     color_feats = extract_color_histograms(frames, bins=64)
     timer.stop("features_color")
-    print(f"✓ Color features: {color_feats.shape}")
+    print(f"Color features: {color_feats.shape}")
     
     print("\n[5/6] Computing optical flow...")
     timer.start("features_flow")
     flow_feats = compute_optical_flow(frames)
     timer.stop("features_flow")
-    print(f"✓ Flow features: {flow_feats.shape}")
+    print(f"Flow features: {flow_feats.shape}")
     
     print("\n[6/6] Building similarity matrix...")
     timer.start("similarity_matrix")
@@ -131,9 +131,8 @@ def main(args):
     
     timer.stop("total")
     
-    print("✅ RECONSTRUCTION COMPLETE")
-    print(f"Output: {args.output}")
-    print(f"\n⏱  Total time: {timer.times['total']:.2f}s")
+    print("RECONSTRUCTION COMPLETE")
+    print(f"\nTotal time: {timer.times['total']:.2f}s")
     print("\nDetailed timing:")
     timer.print_summary()
     timer.to_json("execution_time.json")
