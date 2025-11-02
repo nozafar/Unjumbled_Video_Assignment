@@ -73,9 +73,7 @@ def main(args):
     timer = Timer()
     timer.start("total")
     
-    print("\n" + "="*60)
     print("VIDEO RECONSTRUCTION PIPELINE")
-    print("="*60)
     
     print("\n[1/6] Extracting frames...")
     timer.start("extract_frames")
@@ -83,11 +81,11 @@ def main(args):
     timer.stop("extract_frames")
     print(f"✓ Extracted {len(frames)} frames")
     
-    print("\n[2/6] Computing CNN embeddings (ResNet50)...")
+    print("\n[2/6] Computing CNN embeddings")
     timer.start("features_cnn")
     cnn_feats = extract_cnn_embeddings(frames)
     timer.stop("features_cnn")
-    print(f"✓ CNN features: {cnn_feats.shape}")
+    print(f"CNN features: {cnn_feats.shape}")
     
     print("\n[3/6] Computing ORB visual words...")
     timer.start("features_orb")
@@ -133,9 +131,7 @@ def main(args):
     
     timer.stop("total")
     
-    print("\n" + "="*60)
     print("✅ RECONSTRUCTION COMPLETE")
-    print("="*60)
     print(f"Output: {args.output}")
     print(f"\n⏱  Total time: {timer.times['total']:.2f}s")
     print("\nDetailed timing:")
