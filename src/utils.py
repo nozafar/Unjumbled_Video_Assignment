@@ -1,26 +1,46 @@
-import time, json, os
+import cv2
+import json
+import time
 from datetime import datetime
 
-def now_ts():
-    return datetime.utcnow().isoformat() + "Z"
 
 class Timer:
     def __init__(self):
+        self.start_time = None
         self.records = {}
-    def start(self, name):
-        self.records[name] = {'start': time.time(), 'end': None}
-    def stop(self, name):
-        self.records[name]['end'] = time.time()
-    def elapsed(self, name):
-        r = self.records.get(name)
-        if not r or r['end'] is None:
-            return None
-        return r['end'] - r['start']
-    def to_json(self, path='execution_time.json'):
-        out = {k: {'start': v['start'], 'end': v['end'], 'elapsed_seconds': (v['end']-v['start']) if v['end'] else None} for k,v in self.records.items()}
-        with open(path, 'w') as f:
-            json.dump(out, f, indent=2)
-    def print_summary(self):
-        for k,v in self.records.items():
-            el = (v['end'] - v['start']) if v['end'] else None
-            print(f"{k}: {el:.3f}s" if el else f"{k}: running")
+
+    def start(self, label):
+        self.records[label] = -time.time()  # store negative start time
+
+    def stop(self, label):
+        self.records[label] += time.time()  # add back to compute elapsed
+
+    def to_json(self, filename="execution_log.json", extra=None):
+        log_data = {
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "execution_summary": self.records,
+        }
+
+        if extra:
+            log_data.update(extra)
+
+        with open(filename, "w") as f:
+            json.dump(log_data, f, indent=4)
+
+        print(f"📝 Execution log saved → {filename}")
+
+
+def create_video_from_sequence(frames, seq, output, fps=30):
+    print("Creating output video...")
+
+    sample = cv2.imread(frames[0])
+    h, w = sample.shape[:2]
+    out = cv2.VideoWriter(output, cv2.VideoWriter_fourcc(*"mp4v"), fps, (w, h))
+
+    for idx in seq:
+        frame = cv2.imread(frames[idx])
+        if frame is not None:
+            out.write(frame)
+
+    out.release()
+    print(f"✅ Video saved: {output}")

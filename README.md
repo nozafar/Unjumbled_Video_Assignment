@@ -1,111 +1,86 @@
-# 🎥 Unjumbled Video Assignment – Reconstruct Video Frame Order (AI + Computer Vision)
+# 🎥 Unjumbled Video Reconstruction
 
-This project reconstructs the correct frame sequence from a randomly shuffled (jumbled) video.
-Given a **10-second video (300 frames @ 30 FPS)** where frames are out of order,
-the program restores the original timeline using **Computer Vision + Deep Learning**.
-
-**Accuracy: 90%+ on standard test videos**
+This project reconstructs the correct order of **shuffled video frames** using a simple but effective approach based on **frame-to-frame similarity**.
 
 ---
 
-## ✅ Features & Techniques Used
+## ✅ What the program does
 
-| Technique                            | Weight | Purpose                                  |
-| ------------------------------------ | ------ | ---------------------------------------- |
-| **CNN Embeddings (ResNet-50)**       | 75%    | Deep semantic image understanding        |
-| **ORB + Bag of Visual Words (BoVW)** | 12%    | Keypoint-based structural matching       |
-| **Optical Flow (Farneback)**         | 10%    | Motion continuity & direction            |
-| **Color Histograms (HSV)**           | 3%     | Global scene color similarity            |
-| **Multi-Strategy Ordering**          | -      | TSP + Multi-start greedy approaches      |
-| **2-Opt Local Refinement**           | -      | Post-optimization for path improvements  |
-| **Automatic Direction Detection**    | -      | Ensures correct forward/backward playback|
+* Extracts all frames from a jumbled video
+* Calculates visual difference between every pair of frames
+* Finds the best ordering using **nearest–neighbor traversal**
+* Rebuilds a new video in the correct order
+* Saves execution time log + summary
 
-### 🔬 Algorithm Highlights
-
-- **Heavy CNN emphasis (75%)**: Deep learning features are most reliable for frame similarity
-- **TSP-inspired algorithms**: Treats reconstruction as a traveling salesman problem
-- **Multi-start greedy search**: Tests 20+ starting points to avoid local optima
-- **2-Opt refinement**: Iteratively improves path by testing segment reversals
-- **Bidirectional validation**: Automatically detects if video should play forward or backward
+No deep learning, no CNN, no optical flow.
+Just pure computer vision + distance-based ordering.
 
 ---
 
-## 📁 Project Structure
+## 🧠 How It Works
+
+1. Convert frames to small grayscale thumbnails (120×90)
+2. Compute pairwise **pixel difference (Euclidean distance)**
+3. Select best starting frame (highest difference from others)
+4. Build sequence using **nearest-neighbor search**
+5. Write frames in final order to MP4
+
+---
+
+## ⏱ Performance
+
+| Task                 | Time (typical) |
+| -------------------- | -------------- |
+| Extract frames       | ~1s            |
+| Compute similarities | ~10–20s        |
+| Frame ordering       | ~1–2s          |
+| Write final video    | ~1s            |
+| **Total**            | **~15–25s**    |
+
+The program also writes `execution_log.txt` with timing summary.
+
+---
+
+## 📁 Folder Structure
 
 ```
-jumbled-reconstruct/
-│── data/
-│     └── jumbled_video.mp4          # <-- input video (place here)
-│── output/                          # <-- reconstructed video saved here
-│── src/
-│     ├── reconstruct.py             # main pipeline (run this)
-│     ├── features.py                # ORB, Color, CNN, Optical Flow extraction
-│     ├── ordering.py                # TSP + multi-strategy ordering algorithms
-│     ├── lstm_refiner.py            # optional LSTM refinement module
-│     └── utils.py                   # timer & helper utilities
-│── .gitignore
-│── README.md
-│── requirements.txt
+src/
+│── reconstruct.py      # main script (run this)
+│── features.py         # helper functions (extract frames, differences)
+│── utils.py            # time logging
+output/
+data/
 ```
 
 ---
 
-## 🛠 Installation
+## ▶️ Usage
 
-### 1. Clone the repository
-
-```sh
-git clone https://github.com/nozafar/Unjumbled_Video_Assignment.git
-cd jumbled-reconstruct
-```
-
-### 2. Setup Virtual Environment (recommended)
-
-```sh
-python -m venv venv
-```
-
-Activate it:
-
-| OS        | Command                    |
-| --------- | -------------------------- |
-| Windows   | `.\venv\Scripts\activate`  |
-| Mac/Linux | `source venv/bin/activate` |
-
-### 3. Install dependencies
-
-```sh
-pip install -r requirements.txt
-```
-
-**Required packages:**
-- `opencv-python` (cv2)
-- `numpy`
-- `scikit-learn`
-- `torch` & `torchvision` (PyTorch)
-- `imageio`
-- `tqdm`
-- `scipy`
-
----
-
-## ▶️ Run Reconstruction
-
-Place your jumbled video in `/data/` as:
+Place your jumbled video here:
 
 ```
 data/jumbled_video.mp4
 ```
 
-Then run:
+Run:
 
 ```sh
 python src/reconstruct.py --input data/jumbled_video.mp4 --output output/reconstructed.mp4
 ```
 
-### Advanced Options:
+---
+
+## 🛠 Requirements
+
+```
+opencv-python
+numpy
+```
+
+Install dependencies:
 
 ```sh
+<<<<<<< HEAD
 python src/reconstruct.py \
     --input data/jumbled_video.mp4 \
     --output output/reconstructed.mp4 \
@@ -296,18 +271,21 @@ Potential enhancements for even better accuracy:
 - [ ] **Genetic algorithms**: Test evolutionary optimization approaches
 - [ ] **Learning-based ordering**: Train a neural network to predict frame order
 
+=======
+pip install -r requirements.txt
+```
+
+---
+
+## ✅ Output
+
+* `output/reconstructed.mp4` (reordered video)
+* `execution_log.txt` (time summary + info)
+
+---
+>>>>>>> b5d1f90 (modified code for simpler uproach)
 
 ## 👤 Author
 
-**Nomaan Zafar**  
-🔗 Repository: [https://github.com/nozafar/Unjumbled_Video_Assignment](https://github.com/nozafar/Unjumbled_Video_Assignment)
-
----
-
-
-
----
-
-### ⭐ Star the repo if this helped you!
-
-
+**Nomaan Zafar**
+🚀 Repository: [https://github.com/nozafar/Unjumbled_Video_Assignment](https://github.com/nozafar/Unjumbled_Video_Assignment)
