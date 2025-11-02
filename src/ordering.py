@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def find_start_frame(diff):
     sums = np.sum(diff, axis=1)
     return np.argmax(sums)

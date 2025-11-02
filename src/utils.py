@@ -10,10 +10,10 @@ class Timer:
         self.records = {}
 
     def start(self, label):
-        self.records[label] = -time.time()  # store negative start time
+        self.records[label] = -time.time()  
 
     def stop(self, label):
-        self.records[label] += time.time()  # add back to compute elapsed
+        self.records[label] += time.time()  
 
     def to_json(self, filename="execution_log.json", extra=None):
         log_data = {

@@ -3,7 +3,6 @@ import numpy as np
 import os
 import shutil
 
-
 def extract_frames(video_path, output_dir="frames"):
     print("Extracting frames from video...")
 
@@ -54,7 +53,7 @@ def compute_frame_differences(frames):
     X = np.array(processed, dtype=np.float32)
     
     print("Calculating pairwise distances...")
-    # Efficient vectorized computation: ||a - b||^2 = a² + b² - 2ab
+    
     X2 = np.sum(X ** 2, axis=1, keepdims=True)
     diff = np.sqrt(np.maximum(X2 + X2.T - 2 * np.dot(X, X.T), 0))
     
